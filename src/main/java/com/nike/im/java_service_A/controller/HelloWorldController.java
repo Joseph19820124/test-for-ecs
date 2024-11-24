@@ -1,26 +1,68 @@
 package com.nike.im.java_service_A.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import com.nike.im.java_service_A.dto.Photo;
+import lombok.extern.java.Log;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.*;
+
+@Log
 @RestController
-@RequestMapping("/cloudvendor")
 public class HelloWorldController {
-    // @GetMapping("/{vendorId}")
-    // public CloudVendor getCloudVendor(@PathVariable String vendorId) {
-    //     return new CloudVendor(vendorId, "vendo41", "Address1", "");
-    // }
 
-    // @GetMapping("/{id}")
-    // public CloudVendor getMockCloudVendor(@PathVariable String id) {
-    //     return new CloudVendor(id, "vendor2", "Address2", "13564442916");
-    // }
+    private List<Photo> db2 = List.of(
+            new Photo("1","hello1.jpg"),
+            new Photo("2","hello2.jpg"),
+            new Photo("3","hello3.jpg")
 
-    @GetMapping(path = "/hello")
+            );
+
+    private Map<String, Photo> db = new HashMap<>(){
+        {
+            put("1", new Photo("1", "hello1.jpg"));
+            put("2", new Photo("2", "hello2.jpg"));
+            put("3", new Photo("3", "hello3.jpg"));
+        }
+    };
+
+    @GetMapping(path = "/greeting")
     public String greeting(){
         return "Hello World!-----234";
     }
 
+    @GetMapping("hello")
+    public String hello(){
+        return "Hello World";
+    }
+
+    @GetMapping("photoz")
+    public Collection<Photo> get(){
+        return db.values();
+    }
+    @GetMapping("/photoz/{id}")
+    public Photo get(@PathVariable String id){
+        log.info(id);
+
+        Photo photo = db.get(id);
+        if (photo == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return this.db.get(id);
+    }
+    @DeleteMapping("/photoz/{id}")
+    public void delete(@PathVariable String id){
+        log.info(id);
+
+        Photo photo = db.get(id);
+        if (photo == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else db.remove(id);
+    }
+
+    @PostMapping("/photoz")
+    public Photo create(@RequestBody @Validated Photo photo) {
+        photo.setId(UUID.randomUUID().toString());
+        db.put(photo.getId(), photo);
+        return photo;
+    }
 }
