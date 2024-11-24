@@ -6,5 +6,6 @@ WORKDIR /app
 COPY ./target/java-service-A.jar /app
 # Expose the port the Spring Boot application will run on
 EXPOSE 8080
+EXPOSE 80
 # Command to run the application
 CMD ["java", "-jar", "java-service-A.jar"]
