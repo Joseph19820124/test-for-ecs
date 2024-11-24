@@ -14,4 +14,5 @@ public class Photo {
     @NotEmpty
     private String fileName;
 
+    private byte[] data;
 }
